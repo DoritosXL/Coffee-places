@@ -108,7 +108,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-full focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-200"
+          className="w-full pl-6 pr-20 py-4 text-lg border-2 border-gray-300 rounded-full focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-200"
           style={{
             WebkitAppearance: 'none',
             appearance: 'none',
@@ -119,13 +119,27 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         />
       </div>
 
-      {/* Search button */}
+      {/* Search button - icon only */}
       <button
         onClick={handleSearch}
-        className="absolute right-2 top-1/2 -translate-y-1/2 px-6 py-2 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors duration-200 font-medium shadow-sm hover:shadow-md"
+        className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 bg-orange-500 text-white rounded-full hover:bg-orange-600 active:bg-orange-700 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105 active:scale-95 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-orange-300 focus:ring-offset-2"
         aria-label="Search"
+        type="button"
       >
-        Search
+        <svg
+          className="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2.5}
+            d="M9 5l7 7-7 7"
+          />
+        </svg>
       </button>
 
       {/* Suggestion hint */}
