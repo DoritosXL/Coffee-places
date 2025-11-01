@@ -88,7 +88,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     : '';
 
   return (
-    <div className={`relative w-full ${className}`}>
+    <div className={`relative w-full rounded-4xl ${className}`}>
       <div className="relative rounded-full overflow-visible">
         {/* Ghost text for autocomplete suggestion */}
         {ghostText && (
