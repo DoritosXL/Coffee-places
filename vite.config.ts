@@ -21,10 +21,12 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api-local/, '/api'),
       },
       // Production API proxy
+      // Note: The API endpoint is /api/places, so we need to keep /api in the path
       '/api': {
         target: 'https://nara-vf9k.vercel.app',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
+        // Don't rewrite - keep /api in path since the endpoint is /api/places
+        rewrite: (path) => path, // Keep the path as-is: /api/places stays /api/places
       },
     },
   },
