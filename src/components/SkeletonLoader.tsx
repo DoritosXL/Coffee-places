@@ -42,7 +42,7 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = () => {
       setCafeName(randomPlace.name);
       setCityName(randomPlace.city);
       setHours(`${randomPlace.openHours.start} - ${randomPlace.openHours.end}`);
-      setRatingValue(randomPlace.rating.toFixed(1));
+      setRatingValue(parseFloat(randomPlace.rating.toFixed(1)));
       setTags(randomPlace.tags.slice(0, 2)); // Show max 2 tags
     }, 100); // Change every 100ms
 

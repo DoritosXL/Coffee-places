@@ -21,7 +21,7 @@ export const queryParamsSchema = z.object({
   minRating: z
     .string()
     .optional()
-    .transform((val) => (val ? parseFloat(val) : undefined))
+    .transform((val: string | undefined) => (val ? parseFloat(val) : undefined))
     .pipe(z.number().min(0).max(5).optional()),
   openAfter: z
     .string()
@@ -34,23 +34,23 @@ export const queryParamsSchema = z.object({
   tags: z
     .string()
     .optional()
-    .transform((val) => (val ? val.split(',').map((t) => t.trim()) : undefined))
+    .transform((val: string | undefined) => (val ? val.split(',').map((t) => t.trim()) : undefined))
     .pipe(z.array(z.string()).optional()),
   random: z
     .string()
     .optional()
-    .transform((val) => val === 'true')
-    .pipe(z.boolean().optional()),
+    .transform((val: string | undefined): boolean => val === 'true')
+    .pipe(z.boolean()),
   limit: z
     .string()
     .optional()
-    .transform((val) => (val ? parseInt(val, 10) : 10))
-    .pipe(z.number().int().min(1).max(100).optional()),
+    .transform((val: string | undefined): number => (val ? parseInt(val, 10) : 10))
+    .pipe(z.number().int().min(1).max(100)),
   page: z
     .string()
     .optional()
-    .transform((val) => (val ? parseInt(val, 10) : 1))
-    .pipe(z.number().int().min(1).optional()),
+    .transform((val: string | undefined): number => (val ? parseInt(val, 10) : 1))
+    .pipe(z.number().int().min(1)),
 });
 
 export type QueryParams = z.infer<typeof queryParamsSchema>;
