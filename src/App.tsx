@@ -31,6 +31,10 @@ function App() {
     setSearchQuery(query);
     setCurrentView('results');
 
+    // Track start time to ensure skeleton shows for at least 1 second
+    const startTime = Date.now();
+    const minimumDisplayTime = 1000; // 1 second
+
     try {
       const searchParams: { city?: string; tags?: string[] } = {};
 
@@ -51,8 +55,25 @@ function App() {
       }
 
       const data = await coffeePlacesApi.search(searchParams);
+      
+      // Ensure minimum display time of 1 second for skeleton
+      const elapsedTime = Date.now() - startTime;
+      const remainingTime = Math.max(0, minimumDisplayTime - elapsedTime);
+      
+      if (remainingTime > 0) {
+        await new Promise(resolve => setTimeout(resolve, remainingTime));
+      }
+      
       setResults(data);
     } catch (err) {
+      // Ensure minimum display time even on error
+      const elapsedTime = Date.now() - startTime;
+      const remainingTime = Math.max(0, minimumDisplayTime - elapsedTime);
+      
+      if (remainingTime > 0) {
+        await new Promise(resolve => setTimeout(resolve, remainingTime));
+      }
+      
       setError(err instanceof Error ? err.message : 'An error occurred while fetching results');
       setResults(null);
     } finally {
