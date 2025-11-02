@@ -34,19 +34,41 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = () => {
   useEffect(() => {
     if (dataPool.length === 0) return;
 
-    // Shuffle the values quickly using real data
-    const interval = setInterval(() => {
+    // Initialize all content immediately (before first interval)
+    const initialPlace = dataPool[Math.floor(Math.random() * dataPool.length)];
+    setCafeName(initialPlace.name);
+    setCityName(initialPlace.city);
+    setHours(`${initialPlace.openHours.start} - ${initialPlace.openHours.end}`);
+    setRatingValue(parseFloat(initialPlace.rating.toFixed(1)));
+    setTags(initialPlace.tags.slice(0, 2));
+
+    // Initialize count immediately
+    setCount(Math.floor(Math.random() * 8) + 2); // Numbers between 2 and 9
+
+    // Separate intervals for different update speeds
+    const contentInterval = 200; // Content updates every 200ms
+    const numbersInterval = 50; // Numbers update every 50ms (twice as fast)
+
+    // Interval for shuffling content (names, cities, hours, ratings, tags)
+    const contentIntervalId = setInterval(() => {
       const randomPlace = dataPool[Math.floor(Math.random() * dataPool.length)];
 
-      setCount(Math.floor(Math.random() * 10)); // 0-9
       setCafeName(randomPlace.name);
       setCityName(randomPlace.city);
       setHours(`${randomPlace.openHours.start} - ${randomPlace.openHours.end}`);
       setRatingValue(parseFloat(randomPlace.rating.toFixed(1)));
       setTags(randomPlace.tags.slice(0, 2)); // Show max 2 tags
-    }, 100); // Change every 100ms
+    }, contentInterval);
 
-    return () => clearInterval(interval);
+    // Interval for shuffling numbers (faster)
+    const numbersIntervalId = setInterval(() => {
+      setCount(Math.floor(Math.random() * 8) + 2); // Numbers between 2 and 9
+    }, numbersInterval);
+
+    return () => {
+      clearInterval(contentIntervalId);
+      clearInterval(numbersIntervalId);
+    };
   }, [dataPool]);
 
   return (
