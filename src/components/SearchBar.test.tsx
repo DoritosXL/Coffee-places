@@ -2,10 +2,15 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { SearchBar } from './SearchBar';
+import type { CityInfo } from '../types/coffeePlace';
 
 describe('SearchBar', () => {
   const mockOnSearch = vi.fn();
-  const availableCities = ['Amsterdam', 'Rotterdam', 'Utrecht'];
+  const availableCities: CityInfo[] = [
+    { name: 'amsterdam', displayName: 'Amsterdam', count: 10 },
+    { name: 'rotterdam', displayName: 'Rotterdam', count: 5 },
+    { name: 'utrecht', displayName: 'Utrecht', count: 3 },
+  ];
   const availableTags = ['wifi', 'outdoor seating'];
 
   beforeEach(() => {
@@ -88,7 +93,7 @@ describe('SearchBar', () => {
     await user.type(input, 'Amsterdam');
     await user.click(button);
 
-    expect(mockOnSearch).toHaveBeenCalledWith('Amsterdam', 'city');
+    expect(mockOnSearch).toHaveBeenCalledWith('amsterdam', 'city');
   });
 
   it('calls onSearch when Enter key is pressed', async () => {

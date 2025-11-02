@@ -1,17 +1,38 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { SearchBar } from './SearchBar';
+import type { CityInfo } from '../types/coffeePlace';
 
 interface HomeViewProps {
-  availableCities: string[];
+  availableCities: CityInfo[];
   availableTags: string[];
   onSearch: (query: string, type: 'city' | 'tag' | null) => void;
 }
+
+// Helper function to shuffle array and get random subset
+const getRandomTags = (tags: string[], count: number): string[] => {
+  if (tags.length <= count) return [...tags];
+  
+  // Fisher-Yates shuffle
+  const shuffled = [...tags];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  
+  return shuffled.slice(0, count);
+};
 
 export const HomeView: React.FC<HomeViewProps> = ({
   availableCities,
   availableTags,
   onSearch,
 }) => {
+  // Get random subset of tags to display (currently random, will be popularity-based in future)
+  // Only show tags once they're loaded (empty array initially)
+  const displayedTags = useMemo(() => {
+    if (availableTags.length === 0) return [];
+    return getRandomTags(availableTags, 3); // Show 3 random tags
+  }, [availableTags]);
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-amber-50 flex flex-col items-center justify-center px-4">
       {/* Main Content - Centered like Claude/Gemini */}
@@ -58,27 +79,74 @@ export const HomeView: React.FC<HomeViewProps> = ({
           />
         </div>
 
-        {/* Quick suggestions */}
-        <div className="mt-8 flex flex-wrap gap-3 justify-center">
-          <span className="text-sm text-gray-500">Try:</span>
-          {availableCities.slice(0, 3).map((city) => (
-            <button
-              key={city}
-              onClick={() => onSearch(city, 'city')}
-              className="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm text-gray-700 hover:border-orange-300 hover:bg-orange-50 transition-all duration-200 shadow-sm hover:shadow-md"
-            >
-              {city}
-            </button>
-          ))}
-          {availableTags.map((tag) => (
-            <button
-              key={tag}
-              onClick={() => onSearch(tag, 'tag')}
-              className="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm text-gray-700 hover:border-orange-300 hover:bg-orange-50 transition-all duration-200 shadow-sm hover:shadow-md"
-            >
-              {tag}
-            </button>
-          ))}
+        {/* Quick suggestions - Fixed height container to prevent jumping */}
+        <div className="mt-10 w-full">
+          <div className="flex flex-col items-center gap-6 min-h-[120px]">
+            {/* Cities section */}
+            {availableCities.length > 0 && (
+              <div className="flex flex-col items-center gap-3 animate-fadeIn">
+                <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  Popular Cities
+                </span>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {availableCities.slice(0, 3).map((city, index) => (
+                    <button
+                      key={city.name}
+                      onClick={() => onSearch(city.name, 'city')}
+                      className="px-5 py-2.5 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full text-sm font-medium text-gray-700 hover:border-orange-400 hover:bg-orange-50 hover:text-orange-700 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 active:scale-95"
+                      style={{
+                        animationDelay: `${index * 50}ms`,
+                      }}
+                    >
+                      {city.displayName}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Tags section - with reserved space */}
+            <div className="flex flex-col items-center gap-3 w-full">
+              {displayedTags.length > 0 ? (
+                <>
+                  <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    Popular Tags
+                  </span>
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    {displayedTags.map((tag, index) => (
+                      <button
+                        key={tag}
+                        onClick={() => onSearch(tag, 'tag')}
+                        className="px-5 py-2.5 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-full text-sm font-medium text-orange-700 hover:border-orange-400 hover:from-orange-100 hover:to-amber-100 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 active:scale-95 animate-fadeIn"
+                        style={{
+                          animationDelay: `${index * 50}ms`,
+                        }}
+                      >
+                        {tag}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                // Placeholder skeleton to reserve space while loading - visible but subtle
+                <div className="flex flex-col items-center gap-3 w-full">
+                  <span className="text-xs font-medium text-gray-300 uppercase tracking-wider">
+                    Popular Tags
+                  </span>
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    {[1, 2, 3].map((i) => (
+                      <div
+                        key={i}
+                        className="px-5 py-2.5 bg-gray-50/50 border border-gray-100 rounded-full text-sm animate-pulse"
+                      >
+                        <span className="text-transparent">Loading</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -113,6 +181,21 @@ export const HomeView: React.FC<HomeViewProps> = ({
             transform: translateY(-15px) translateX(3px) scaleX(1.2);
             opacity: 0.6;
           }
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .animate-fadeIn {
+          animation: fadeIn 0.4s ease-out forwards;
         }
       `}</style>
     </div>

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { CoffeePlace, SearchParams } from '../types/coffeePlace';
+import type { CoffeePlace, SearchParams, CitiesResponse, CityInfo } from '../types/coffeePlace';
 
 // API Base URL configuration:
 // - In development: ALWAYS use '/api' (relative path) to go through Vite proxy (avoids CORS)
@@ -100,7 +100,9 @@ export const coffeePlacesApi = {
    */
   async search(params: SearchParams): Promise<CoffeePlace[]> {
     try {
-      const queryParams: Record<string, string> = {};
+      const queryParams: Record<string, string> = {
+        limit: '100',
+      };
 
       if (params.city) {
         queryParams.city = params.city;
@@ -152,23 +154,19 @@ export const coffeePlacesApi = {
   },
 
   /**
-   * Fetch all available cities (for autocomplete)
+   * Fetch all available cities (for autocomplete) using /api/cities endpoint
    */
-  async getCities(): Promise<string[]> {
+  async getCities(): Promise<CityInfo[]> {
     try {
-      const response = await apiClient.get(`${API_BASE_URL}/places`);
-      console.log('API Response:', response.data);
+      const response = await apiClient.get<CitiesResponse>(`${API_BASE_URL}/cities`);
+      console.log('Cities API Response:', response.data);
 
-      // Handle if response.data is an object with a data property
-      const places = Array.isArray(response.data) ? response.data : response.data.data;
-
-      if (!Array.isArray(places)) {
-        console.error('Expected array but got:', typeof places, places);
+      if (!response.data || !Array.isArray(response.data.cities)) {
+        console.error('Expected cities array but got:', response.data);
         return [];
       }
 
-      const cities = [...new Set(places.map((place: CoffeePlace) => place.city))];
-      return cities.sort();
+      return response.data.cities;
     } catch (error) {
       console.error('Error fetching cities:', error);
       return [];
@@ -179,8 +177,15 @@ export const coffeePlacesApi = {
    * Get available tags (for autocomplete)
    */
   getAvailableTags(): string[] {
-    // Based on the requirement, we know 'wifi' is one of the tags
-    // This could be expanded or fetched from the API if needed
-    return ['wifi'];
+    // Common tags from OSM data including amenities
+    return [
+      'wifi',
+      'outdoor',
+      'wheelchair-accessible',
+      'takeaway',
+      'delivery',
+      'coffee',
+      'cozy',
+    ];
   },
 };

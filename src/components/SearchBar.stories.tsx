@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { SearchBar } from './SearchBar';
+import type { CityInfo } from '../types/coffeePlace';
 
 const meta = {
   title: 'Components/SearchBar',
@@ -39,14 +40,26 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    availableCities: ['Amsterdam', 'Rotterdam', 'Utrecht', 'The Hague', 'Eindhoven'],
+    availableCities: [
+      { name: 'amsterdam', displayName: 'Amsterdam', count: 25 },
+      { name: 'rotterdam', displayName: 'Rotterdam', count: 15 },
+      { name: 'utrecht', displayName: 'Utrecht', count: 10 },
+      { name: 'the-hague', displayName: 'The Hague', count: 8 },
+      { name: 'eindhoven', displayName: 'Eindhoven', count: 12 },
+    ] as CityInfo[],
     availableTags: ['wifi', 'outdoor seating', 'pet friendly'],
   },
 };
 
 export const WithCityAutocomplete: Story = {
   args: {
-    availableCities: ['Amsterdam', 'Rotterdam', 'Utrecht', 'The Hague', 'Eindhoven'],
+    availableCities: [
+      { name: 'amsterdam', displayName: 'Amsterdam', count: 25 },
+      { name: 'rotterdam', displayName: 'Rotterdam', count: 15 },
+      { name: 'utrecht', displayName: 'Utrecht', count: 10 },
+      { name: 'the-hague', displayName: 'The Hague', count: 8 },
+      { name: 'eindhoven', displayName: 'Eindhoven', count: 12 },
+    ] as CityInfo[],
     availableTags: ['wifi'],
   },
   parameters: {
@@ -60,7 +73,10 @@ export const WithCityAutocomplete: Story = {
 
 export const WithTagAutocomplete: Story = {
   args: {
-    availableCities: ['Amsterdam', 'Rotterdam'],
+    availableCities: [
+      { name: 'amsterdam', displayName: 'Amsterdam', count: 25 },
+      { name: 'rotterdam', displayName: 'Rotterdam', count: 15 },
+    ] as CityInfo[],
     availableTags: ['wifi', 'outdoor seating', 'pet friendly'],
   },
   parameters: {
@@ -88,7 +104,11 @@ export const EmptyState: Story = {
 
 export const CustomPlaceholder: Story = {
   args: {
-    availableCities: ['Paris', 'London', 'Berlin'],
+    availableCities: [
+      { name: 'paris', displayName: 'Paris', count: 30 },
+      { name: 'london', displayName: 'London', count: 28 },
+      { name: 'berlin', displayName: 'Berlin', count: 20 },
+    ] as CityInfo[],
     availableTags: ['wifi'],
     placeholder: 'Find your perfect coffee spot...',
   },

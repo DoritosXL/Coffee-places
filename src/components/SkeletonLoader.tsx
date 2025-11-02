@@ -11,7 +11,6 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = () => {
   const [cityName, setCityName] = useState('');
   const [hours, setHours] = useState('');
   const [ratingValue, setRatingValue] = useState(4.5);
-  const [tags, setTags] = useState<string[]>([]);
   const [dataPool, setDataPool] = useState<CoffeePlace[]>(fallbackCoffeePlaces);
 
   useEffect(() => {
@@ -37,10 +36,13 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = () => {
     // Initialize all content immediately (before first interval)
     const initialPlace = dataPool[Math.floor(Math.random() * dataPool.length)];
     setCafeName(initialPlace.name);
-    setCityName(initialPlace.city);
-    setHours(`${initialPlace.openHours.start} - ${initialPlace.openHours.end}`);
+    setCityName(initialPlace.city || 'Unknown');
+    if (initialPlace.openHours) {
+      setHours(`${initialPlace.openHours.start} - ${initialPlace.openHours.end}`);
+    } else {
+      setHours('Hours not available');
+    }
     setRatingValue(parseFloat(initialPlace.rating.toFixed(1)));
-    setTags(initialPlace.tags.slice(0, 2));
 
     // Initialize count immediately
     setCount(Math.floor(Math.random() * 8) + 2); // Numbers between 2 and 9
@@ -54,10 +56,13 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = () => {
       const randomPlace = dataPool[Math.floor(Math.random() * dataPool.length)];
 
       setCafeName(randomPlace.name);
-      setCityName(randomPlace.city);
-      setHours(`${randomPlace.openHours.start} - ${randomPlace.openHours.end}`);
+      setCityName(randomPlace.city || 'Unknown');
+      if (randomPlace.openHours) {
+        setHours(`${randomPlace.openHours.start} - ${randomPlace.openHours.end}`);
+      } else {
+        setHours('Hours not available');
+      }
       setRatingValue(parseFloat(randomPlace.rating.toFixed(1)));
-      setTags(randomPlace.tags.slice(0, 2)); // Show max 2 tags
     }, contentInterval);
 
     // Interval for shuffling numbers (faster)
@@ -145,35 +150,6 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = () => {
             </svg>
             <span>Open: {hours}</span>
           </div>
-
-          {/* Tags - dynamic from data */}
-          {tags.length > 0 && (
-            <div className="flex items-start mt-3 animate-pulse">
-              <svg
-                className="w-5 h-5 mr-2 text-gray-300 mt-0.5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-                />
-              </svg>
-              <div className="flex flex-wrap gap-2">
-                {tags.map((tag, index) => (
-                  <span
-                    key={index}
-                    className="px-3 py-1 bg-gray-100 text-gray-400 rounded-full text-sm"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </>
